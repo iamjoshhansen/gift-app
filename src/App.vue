@@ -1,54 +1,193 @@
 <template>
   <div id="app">
-    <header>
-      <span>Vue.js PWA</span>
-    </header>
+    <the-header
+      @clickMenu="toggleMenu($event)"
+      :showMenu="isMobile && user !== null"
+      :showLogout="user !== null"
+    />
     <main>
-      <img src="./assets/logo.png" alt="Vue.js PWA">
-      <router-view></router-view>
+      <login
+        v-if="!isSigningIn && user === null"
+        @signin="isSigningIn = true;"
+      />
+
+      <div v-if="isSigningIn" class="loading">
+        <div>Signing in...</div>
+      </div>
+
+      <div v-if="!isSigningIn && user !== null" class="app-content">
+        <nav v-if="!isMobile || showNav">
+          <ul class="people-list">
+            <li class="people-list__item"
+              @click="showNav=false">
+              <nav-item-person
+                :person="user"
+                to="/"
+                :selected="selectedPerson === user.id"
+              />
+            </li>
+          </ul>
+
+          <h2>People</h2>
+          <ul class="people-list">
+            <li
+              v-for="person in people"
+              :key="person.id"
+              class="people-list__item"
+              @click="showNav=false"
+            >
+              <nav-item-person
+                :selected="selectedPerson === person.id.toString()"
+                :person="person"
+              />
+            </li>
+          </ul>
+        </nav>
+
+        <router-view v-if="!showNav" class="router-view"></router-view>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
+import Login from '@/components/login';
+import theHeader from '@/components/the-header';
+import NavItemPerson from '@/components/nav-item-person';
+
 export default {
   name: 'app',
+  components: {
+    theHeader,
+    Login,
+    NavItemPerson,
+  },
+  data() {
+    return {
+      isMobile: window.innerWidth < 737,
+      showNav: false,
+      isSigningIn: false,
+    };
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+    people() {
+      return this.$store.getters.people.filter(person => person.id !== this.$store.state.userId);
+    },
+    selectedPerson() {
+      return this.$store.state.selectedPerson;
+    },
+  },
+  methods: {
+    toggleMenu() {
+      this.showNav = !this.showNav;
+    },
+  },
+  watch: {
+    user() {
+      if (this.user) {
+        this.isSigningIn = false;
+      }
+    },
+  },
+  mounted() {
+    document.getElementById('gift-splash').remove();
+
+    const localAuth = localStorage.getItem('gift-auth');
+    if (localAuth) {
+      this.isSigningIn = true;
+      this.$store.commit('setAuth', localAuth);
+      this.$store.dispatch('getDataFromAuth', localAuth);
+    }
+  },
 };
 </script>
 
 <style>
 body {
   margin: 0;
+  padding: 0;
 }
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: #101010;
+  min-height: 100vh;
+  background: url(~@/assets/bg-cabin.jpg) no-repeat 50% 50%;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+@media (min-width: 737px) {
+  #app {
+    background-image: url(~@/assets/bg-outside-ornament.jpg);
+  }
 }
 
 main {
-  text-align: center;
-  margin-top: 40px;
+  margin: 0 auto;
+  padding: 0 10px;
+  max-width: 1000px;
+  min-height: calc(100vh - 40px);
+  display: flex;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-header {
+.app-content {
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+}
+
+.router-view {
+  width: 100%;
+}
+
+nav {
+  background: #f9f9f9;
+  color: #333;
+  flex-shrink: 0;
+  width: 100%;
+  padding: 10px;
+  margin: 0 -10px;
+}
+
+@media (min-width: 737px) {
+  header h1 {
+    text-align: left;
+  }
+
+  nav {
+    width: auto;
+    margin: 0 20px 0 -10px;
+  }
+}
+
+.people-list {
+  margin: 0 -10px;
+  padding: 0;
+  list-style: none;
+  border-bottom: solid 1px #eee;
+}
+
+.people-list__item {
+  padding: 0;
   margin: 0;
-  height: 56px;
-  padding: 0 16px 0 24px;
-  background-color: #35495E;
-  color: #ffffff;
+  border-top: solid 1px #eee;
 }
 
-header span {
-  display: block;
-  position: relative;
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: .02em;
-  font-weight: 400;
-  box-sizing: border-box;
-  padding-top: 16px;
+.loading {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  font-size: 32px;
+  flex-direction: column;
+  margin: auto;
+  color: #999;
 }
 </style>
