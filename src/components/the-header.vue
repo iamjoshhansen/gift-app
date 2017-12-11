@@ -84,6 +84,10 @@ export default {
     text-align: center;
     width: 100%;
     font-family: 'Exo 2';
+
+    @media (min-width: 737px) {
+      text-align: left;
+    }
   }
 
   &__menu,
