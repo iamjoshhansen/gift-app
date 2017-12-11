@@ -17,7 +17,7 @@ const store = new Vuex.Store({
     people: [],
     gifts: [],
     selectedPerson: null,
-    addGiftError: null,
+    crudGiftError: null,
   },
 
   getters,

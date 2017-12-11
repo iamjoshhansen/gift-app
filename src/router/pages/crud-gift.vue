@@ -157,7 +157,7 @@ export default {
       return this.id ? 'update' : 'create';
     },
     error() {
-      return this.$store.addGiftError;
+      return this.$store.crudGiftError;
     },
     userId() {
       return this.$store.state.userId;
