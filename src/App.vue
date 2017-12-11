@@ -16,35 +16,8 @@
       </div>
 
       <div v-if="!isSigningIn && user !== null" class="app-content">
-        <nav v-if="!isMobile || showNav">
-          <ul class="people-list">
-            <li class="people-list__item"
-              @click="showNav=false">
-              <nav-item-person
-                :person="user"
-                to="/"
-                :selected="selectedPerson === user.id"
-              />
-            </li>
-          </ul>
-
-          <h2>People</h2>
-          <ul class="people-list">
-            <li
-              v-for="person in people"
-              :key="person.id"
-              class="people-list__item"
-              @click="showNav=false"
-            >
-              <nav-item-person
-                :selected="selectedPerson === person.id.toString()"
-                :person="person"
-              />
-            </li>
-          </ul>
-        </nav>
-
-        <router-view v-if="!showNav" class="router-view"></router-view>
+        <the-nav v-if="!isMobile || showNav" />
+        <router-view v-if="!isMobile || (isMobile && !showNav)" class="router-view"></router-view>
       </div>
     </main>
   </div>
@@ -53,14 +26,14 @@
 <script>
 import Login from '@/components/login';
 import theHeader from '@/components/the-header';
-import NavItemPerson from '@/components/nav-item-person';
+import theNav from '@/components/the-nav';
 
 export default {
   name: 'app',
   components: {
     theHeader,
+    theNav,
     Login,
-    NavItemPerson,
   },
   data() {
     return {
@@ -72,12 +45,6 @@ export default {
   computed: {
     user() {
       return this.$store.getters.user;
-    },
-    people() {
-      return this.$store.getters.people.filter(person => person.id !== this.$store.state.userId);
-    },
-    selectedPerson() {
-      return this.$store.state.selectedPerson;
     },
   },
   methods: {
@@ -105,7 +72,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 body {
   margin: 0;
   padding: 0;
@@ -155,14 +122,8 @@ nav {
   width: 100%;
   padding: 10px;
   margin: 0 -10px;
-}
 
-@media (min-width: 737px) {
-  header h1 {
-    text-align: left;
-  }
-
-  nav {
+  @media (min-width: 737px) {
     width: auto;
     margin: 0 20px 0 -10px;
   }

@@ -1,27 +1,27 @@
 <template>
   <router-link
     :to="to"
-    class="nav-item-person"
-    :class="`${selected ? 'nav-item-person--selected' : ''}`"
+    class="nav-item"
+    :class="`${selected ? 'nav-item--selected' : ''}`"
   >
     <avatar
       :id="person.id"
-      class="nav-item-person__avatar"
+      class="nav-item__avatar"
     />
 
-    <div class="nav-item-person__name">
+    <div class="nav-item__name">
       {{ person.firstName }} {{ person.lastName }}
     </div>
     <div
-      class="nav-item-person__counter"
+      class="nav-item__counter"
       :title="`You've claimed ${claimedGiftCount} gift${claimedGiftCount===1?'':'s'} for ${person.firstName}`"
-      :class="`${claimedGiftCount === 0 ? 'nav-item-person__counter--invisible' : ''}`"
+      :class="`${claimedGiftCount === 0 ? 'nav-item__counter--invisible' : ''}`"
     >
       {{ claimedGiftCount }}
     </div>
     <!-- div
-      class="nav-item-person__counter"
-      :class="`${claimedGiftCount === 0 ? 'nav-item-person__counter--invisible' : ''}`"
+      class="nav-item__counter"
+      :class="`${claimedGiftCount === 0 ? 'nav-item__counter--invisible' : ''}`"
     >
       ${{ claimedGiftSpending }}
     </div -->
@@ -32,7 +32,7 @@
 import Avatar from '@/components/avatar';
 
 export default {
-  name: 'nav-item-person',
+  name: 'nav-item',
   components: {
     Avatar,
   },
@@ -87,7 +87,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.nav-item-person {
+.nav-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
